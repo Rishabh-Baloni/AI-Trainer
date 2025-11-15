@@ -1,174 +1,387 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+
+interface Exercise {
+  exerciseId: string
+  name: string
+  imageUrl: string
+  bodyParts: string[]
+  equipments: string[]
+  exerciseType: string
+  keywords: string[]
+}
 
 export default function WorkoutPage() {
-  const [selectedDuration, setSelectedDuration] = useState(30)
-  const [selectedLevel, setSelectedLevel] = useState('intermediate')
+  const [exercises, setExercises] = useState<Exercise[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedBodyPart, setSelectedBodyPart] = useState('')
+  const [selectedEquipment, setSelectedEquipment] = useState('')
+  const [bodyParts, setBodyParts] = useState<string[]>([])
+  const [equipments, setEquipments] = useState<string[]>([])
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null)
 
-  const todayWorkout = [
-    { exercise: 'Warm-up', duration: '5 min', sets: '-', reps: '-' },
-    { exercise: 'Squats', duration: '3 min', sets: '3', reps: '15' },
-    { exercise: 'Push-ups', duration: '3 min', sets: '3', reps: '12' },
-    { exercise: 'Lunges', duration: '4 min', sets: '3', reps: '10 each' },
-    { exercise: 'Plank', duration: '3 min', sets: '3', reps: '45 sec' },
-    { exercise: 'Cool-down', duration: '5 min', sets: '-', reps: '-' },
-  ]
+  // Fetch available body parts and equipments
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const [bodyPartsRes, equipmentsRes] = await Promise.all([
+          fetch('http://localhost:8000/api/workout/bodyparts'),
+          fetch('http://localhost:8000/api/workout/equipments')
+        ])
+        
+        const bodyPartsData = await bodyPartsRes.json()
+        const equipmentsData = await equipmentsRes.json()
+        
+        if (bodyPartsData.success) setBodyParts(bodyPartsData.bodyParts)
+        if (equipmentsData.success) setEquipments(equipmentsData.equipments)
+      } catch (error) {
+        console.error('Error fetching filters:', error)
+      }
+    }
+    
+    fetchFilters()
+  }, [])
+
+  // Fetch exercises based on filters
+  useEffect(() => {
+    const fetchExercises = async () => {
+      setLoading(true)
+      try {
+        let url = 'http://localhost:8000/api/workout/exercises?limit=50'
+        
+        if (searchQuery) {
+          url = `http://localhost:8000/api/workout/exercises/search?query=${encodeURIComponent(searchQuery)}&limit=50`
+        } else if (selectedBodyPart) {
+          url = `http://localhost:8000/api/workout/exercises/bodypart/${encodeURIComponent(selectedBodyPart)}?limit=50`
+        } else if (selectedEquipment) {
+          url = `http://localhost:8000/api/workout/exercises/equipment/${encodeURIComponent(selectedEquipment)}?limit=50`
+        }
+        
+        const response = await fetch(url)
+        const data = await response.json()
+        
+        if (data.success) {
+          setExercises(data.exercises || [])
+        }
+      } catch (error) {
+        console.error('Error fetching exercises:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchExercises()
+  }, [searchQuery, selectedBodyPart, selectedEquipment])
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Search is handled by useEffect
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setSelectedBodyPart('')
+    setSelectedEquipment('')
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <a href="/dashboard" className="text-indigo-600 hover:text-indigo-700">← Back</a>
-            <h1 className="text-2xl font-bold text-gray-900">Workout Plan</h1>
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <a href="/dashboard" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                ← Dashboard
+              </a>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Exercise Library
+              </h1>
+            </div>
+            <div className="text-sm text-gray-600">
+              {exercises.length} exercises
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Today's Workout */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">Today's Workout</h2>
-                <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                  Full Body
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {todayWorkout.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{item.exercise}</h4>
-                        <p className="text-sm text-gray-600">{item.duration}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">
-                        {item.sets !== '-' && `${item.sets} sets × ${item.reps}`}
-                        {item.sets === '-' && item.reps}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition">
-                Start Workout
-              </button>
+        {/* Search and Filters */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search Bar */}
+            <div className="md:col-span-2">
+              <form onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  placeholder="Search exercises (e.g., squat, push, curl)..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </form>
             </div>
 
-            {/* Weekly Schedule */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Weekly Schedule</h2>
-              <div className="grid grid-cols-7 gap-2">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
-                  <div
-                    key={day}
-                    className={`p-3 rounded-lg text-center ${
-                      index === 0
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    <div className="text-xs font-semibold">{day}</div>
-                    <div className="text-lg mt-1">
-                      {index === 0 ? '✓' : index < 5 ? '💪' : '😴'}
-                    </div>
-                  </div>
+            {/* Body Part Filter */}
+            <div>
+              <select
+                value={selectedBodyPart}
+                onChange={(e) => {
+                  setSelectedBodyPart(e.target.value)
+                  setSelectedEquipment('')
+                  setSearchQuery('')
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="">All Body Parts</option>
+                {bodyParts.map((part) => (
+                  <option key={part} value={part}>
+                    {part.charAt(0) + part.slice(1).toLowerCase()}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
+
+            {/* Equipment Filter */}
+            <div>
+              <select
+                value={selectedEquipment}
+                onChange={(e) => {
+                  setSelectedEquipment(e.target.value)
+                  setSelectedBodyPart('')
+                  setSearchQuery('')
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="">All Equipment</option>
+                {equipments.map((equipment) => (
+                  <option key={equipment} value={equipment}>
+                    {equipment.charAt(0) + equipment.slice(1).toLowerCase()}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Customize Workout */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Customize</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Duration
-                  </label>
-                  <select
-                    value={selectedDuration}
-                    onChange={(e) => setSelectedDuration(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  >
-                    <option value={15}>15 minutes</option>
-                    <option value={30}>30 minutes</option>
-                    <option value={45}>45 minutes</option>
-                    <option value={60}>60 minutes</option>
-                  </select>
+          {/* Active Filters */}
+          {(searchQuery || selectedBodyPart || selectedEquipment) && (
+            <div className="mt-4 flex items-center gap-2">
+              <span className="text-sm text-gray-600">Active filters:</span>
+              {searchQuery && (
+                <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">
+                  Search: {searchQuery}
+                </span>
+              )}
+              {selectedBodyPart && (
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                  {selectedBodyPart}
+                </span>
+              )}
+              {selectedEquipment && (
+                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                  {selectedEquipment}
+                </span>
+              )}
+              <button
+                onClick={resetFilters}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p className="mt-4 text-gray-600">Loading exercises...</p>
+          </div>
+        )}
+
+        {/* Exercise Grid */}
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {exercises.map((exercise) => (
+              <div
+                key={exercise.exerciseId}
+                onClick={() => setSelectedExercise(exercise)}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
+              >
+                {/* Exercise Image */}
+                <div className="relative h-48 bg-gradient-to-br from-indigo-100 to-purple-100 overflow-hidden">
+                  {exercise.imageUrl && (
+                    <img
+                      src={exercise.imageUrl}
+                      alt={exercise.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Difficulty Level
-                  </label>
-                  <select
-                    value={selectedLevel}
-                    onChange={(e) => setSelectedLevel(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  >
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                  </select>
+                {/* Exercise Info */}
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 h-12">
+                    {exercise.name}
+                  </h3>
+                  
+                  {/* Body Parts Tags */}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {exercise.bodyParts.slice(0, 2).map((part) => (
+                      <span
+                        key={part}
+                        className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium"
+                      >
+                        {part.charAt(0) + part.slice(1).toLowerCase()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Equipment Tags */}
+                  <div className="flex flex-wrap gap-1">
+                    {exercise.equipments.slice(0, 1).map((equipment) => (
+                      <span
+                        key={equipment}
+                        className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                      >
+                        {equipment.charAt(0) + equipment.slice(1).toLowerCase()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
-                <button className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-lg font-semibold transition">
-                  Generate New Plan
-                </button>
+                {/* Hover Effect */}
+                <div className="px-4 pb-4">
+                  <button className="w-full py-2 bg-indigo-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Details
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        )}
+
+        {/* No Results */}
+        {!loading && exercises.length === 0 && (
+          <div className="text-center py-12 bg-white rounded-xl shadow-lg">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No exercises found</h3>
+            <p className="text-gray-600 mb-4">Try adjusting your search or filters</p>
+            <button
+              onClick={resetFilters}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </main>
+
+      {/* Exercise Detail Modal */}
+      {selectedExercise && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setSelectedExercise(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">{selectedExercise.name}</h2>
+              <button
+                onClick={() => setSelectedExercise(null)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
             </div>
 
-            {/* Progress This Week */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">This Week</h2>
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Exercise Image */}
+              <div className="relative h-64 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl overflow-hidden mb-6">
+                {selectedExercise.imageUrl && (
+                  <img
+                    src={selectedExercise.imageUrl}
+                    alt={selectedExercise.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+
+              {/* Exercise Details */}
               <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">Workouts</span>
-                    <span className="text-sm font-semibold">4/5</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{ width: '80%' }}></div>
+                  <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Body Parts</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedExercise.bodyParts.map((part) => (
+                      <span
+                        key={part}
+                        className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-medium"
+                      >
+                        {part.charAt(0) + part.slice(1).toLowerCase()}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">Calories</span>
-                    <span className="text-sm font-semibold">1,450/1,800</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-600 h-2 rounded-full" style={{ width: '80%' }}></div>
+                  <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Equipment</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedExercise.equipments.map((equipment) => (
+                      <span
+                        key={equipment}
+                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm"
+                      >
+                        {equipment.charAt(0) + equipment.slice(1).toLowerCase()}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-indigo-600">7</div>
-                    <div className="text-sm text-gray-600">Day Streak 🔥</div>
-                  </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Exercise Type</h3>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
+                    {selectedExercise.exerciseType}
+                  </span>
                 </div>
+
+                {selectedExercise.keywords && selectedExercise.keywords.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedExercise.keywords.slice(0, 5).map((keyword, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs"
+                        >
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-6 flex gap-3">
+                <button className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold">
+                  Add to Workout
+                </button>
+                <button className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold">
+                  Save Favorite
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      )}
     </div>
   )
 }
