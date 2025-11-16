@@ -13,13 +13,14 @@ The Problem:
 Many people struggle to maintain fitness routines because they don't know which exercises to do, how to do them correctly, or what to eat. Commercial fitness apps are expensive, and free resources are scattered across the internet. We wanted to create a centralized platform that provides exercise guidance, meal planning, and eventually real-time form correction using AI.
 
 Our Solution:
-We built a full-stack web application that integrates with professional fitness APIs to provide users with a searchable library of over 11,000 exercises, personalized meal plan generation, and a foundation for AI-powered features like pose detection and progress analytics.
+We built a full-stack web application with real machine learning capabilities. It includes a searchable library of 11,000+ exercises, personalized meal planning, intelligent workout recommendations, and our most impressive feature - LIVE POSE DETECTION with automatic rep counting and form scoring.
 
 Technology Stack:
 - Backend: FastAPI (Python) - a modern, fast web framework that's production-ready
 - Frontend: Next.js with TypeScript - for a responsive, interactive user interface
 - External APIs: ExerciseDB (11,000+ exercises with images) and Spoonacular (meal planning and nutrition data)
-- ML Framework: MediaPipe for pose detection (structure ready, implementation in progress)
+- ML Framework: MediaPipe (Google) for real-time pose detection with 33-point landmark tracking
+- Machine Learning: Custom algorithms for rep counting, form analysis, and workout recommendation
 - Database: PostgreSQL (planned for user accounts and progress tracking)
 - Version Control: Git/GitHub for code management and collaboration
 
@@ -28,7 +29,7 @@ WHAT WE'VE COMPLETED (2 MINUTES)
 ========================================
 
 Backend Development (FastAPI):
-We created a complete backend API server with 11 endpoints across 5 different modules. Let me explain what each one does:
+We created a complete backend API server with 13 endpoints across 5 different modules. Let me explain what each one does:
 
 1. Workout API (5 endpoints):
    - GET /api/workout/exercises - Fetches exercises with pagination (we can get 10, 50, or any number)
@@ -91,16 +92,65 @@ Development Environment:
 - Git repository with 45+ files committed
 - Comprehensive documentation files (README, PROGRESS.md, API guides, testing checklists)
 
+Machine Learning Implementation (NEW!):
+We've implemented two complete ML modules:
+
+1. Pose Detection System (DEMO-READY):
+   - Uses Google's MediaPipe to detect 33 body landmarks in real-time
+   - Automatic rep counting for squats and pushups
+   - Form scoring (0-100%) with live feedback
+   - Calculates joint angles to determine correct form
+   - Provides specific feedback like "Knees too forward" or "Go deeper"
+   - Exercise database: 20 exercises (bodyweight and dumbbell)
+   - Workout plan generator with 3, 4, 5, or 6-day splits
+   - BMI, BMR, and TDEE calculations
+   - Intelligent filtering by fitness level and available equipment
+
 ========================================
-LIVE DEMONSTRATION (3-4 MINUTES)
+LIVE DEMONSTRATION (5-6 MINUTES)
 ========================================
 
 Now let me show you the actual application running. I have two servers running:
 - Backend on http://localhost:8000
 - Frontend on http://localhost:3001
 
-Step 1: Workout Page Demo
-First, I'll open the Workout page. You can see we have 50 exercises loaded in a beautiful grid layout with real images.
+Step 1: POSE DETECTION LIVE DEMO (3-4 MIN) ⭐ MOST IMPRESSIVE
+First, let me show you our most exciting feature - real-time pose detection with automatic rep counting.
+
+I'll open the Jupyter notebook in ml_models/pose_detection/mediapipe.ipynb and run the enhanced cell.
+
+[Webcam starts]
+You can see my skeleton being tracked in real-time with colored lines showing different body parts. The green lines are the base skeleton, orange shows upper body, and purple shows lower body.
+
+Look at the statistics overlay in the top-left corner:
+- Exercise mode is currently set to "SQUAT"
+- Rep counter starts at 0
+- Form score is updating in real-time
+
+Now watch as I do 5 squats...
+[Perform squats slowly]
+
+Notice several things:
+1. The rep counter only increases when I go deep enough (knee angle below 90 degrees)
+2. The form score shows as a percentage - it's green when above 80%, orange between 60-80%, red below 60%
+3. You can see feedback messages appearing like "Keep back straight" or "Knees too forward"
+4. It's analyzing my form in real-time using angle calculations
+
+Now let me press 'p' to switch to pushup mode...
+[Switch to pushup mode]
+
+The system has changed to analyze pushups. Now I'll do 3 pushups...
+[Perform pushups]
+
+See how it:
+- Counts reps based on elbow angle (only counts when I go below 90 degrees)
+- Checks body alignment (tells me if my hips are too high or too low)
+- Updates the form score based on multiple criteria
+
+This is actual machine learning in action - using computer vision to analyze human movement and provide coaching feedback, all happening locally in real-time!
+
+Step 2: Workout Page Demo (1 min)
+Now let me show the web application. I'll open the Workout page. You can see we have 50 exercises loaded in a beautiful grid layout with real images.
 
 Let me search for "squat" - watch how the results update instantly. You can see different squat variations like "Barbell Squat", "Jump Squat", "Side Lunge", etc.
 
@@ -108,7 +158,7 @@ Now let me clear that and use the body part filter. I'll select "CHEST" from the
 
 Let me click on one of these exercises. A modal opens showing the full details - the exercise image, which body parts it targets (shown as colored tags), what equipment you need, and the exercise type. This information comes directly from the ExerciseDB API in real-time.
 
-Step 2: Diet Page Demo
+Step 3: Diet Page Demo (1 min)
 Now let me show you the Meal Planner. On the left side, we have a form with several options.
 
 I'll select "One Day" for timeframe, set the calories to 2000 (you can see the slider moves smoothly from 1200 to 4000), and I'll choose "Vegetarian" from the diet dropdown.
@@ -124,7 +174,7 @@ And here we go! The meal plan is generated. Look at the nutrition summary at the
 
 If I had selected "Full Week" instead, it would generate this same detailed information for all 7 days of the week.
 
-Step 3: API Documentation
+Step 4: API Documentation (30 sec)
 Finally, let me quickly show you the backend API documentation at http://localhost:8000/docs
 
 This is automatically generated by FastAPI. You can see all 11 endpoints listed here. Let me click on one - "GET /api/workout/exercises". I can click "Try it out", set a limit of 5 exercises, and click "Execute".
