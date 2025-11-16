@@ -3,6 +3,10 @@ Exercise Form Analyzer
 Analyzes specific exercises and provides real-time feedback
 """
 
+import numpy as np
+import mediapipe as mp
+from .pose_detector import PoseDetector
+
 
 class ExerciseAnalyzer:
     """
@@ -13,53 +17,223 @@ class ExerciseAnalyzer:
         """
         Initialize exercise templates and thresholds
         """
-        self.exercises = {
-            'squat': {},
-            'pushup': {},
-            'plank': {},
-            'lunge': {},
-            'bicep_curl': {},
+        self.pose_detector = PoseDetector()
+        self.mp_pose = mp.solutions.pose
+        
+        # Rep counting state
+        self.rep_count = 0
+        self.stage = None  # "up" or "down"
+        
+        # Exercise thresholds
+        self.thresholds = {
+            'squat': {
+                'knee_angle_down': 90,
+                'knee_angle_up': 160,
+                'back_angle_min': 160,
+                'back_angle_max': 200
+            },
+            'pushup': {
+                'elbow_angle_down': 90,
+                'elbow_angle_up': 160,
+                'body_angle_min': 160,
+                'body_angle_max': 200
+            },
+            'plank': {
+                'body_angle_min': 165,
+                'body_angle_max': 195,
+                'min_hold_time': 5  # seconds
+            }
         }
     
     def analyze_squat(self, landmarks):
         """
         Analyze squat form
         
+        Args:
+            landmarks: MediaPipe pose landmarks
+            
         Returns:
-            feedback: List of correction messages
-            score: Form accuracy score (0-100)
+            dict: {
+                'feedback': List of correction messages,
+                'score': Form accuracy score (0-100),
+                'angles': Dict of joint angles,
+                'stage': Current movement stage
+            }
         """
-        pass
+        if not landmarks:
+            return {'feedback': ['No pose detected'], 'score': 0, 'angles': {}, 'stage': None}
+        
+        # Get joint coordinates
+        hip = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_HIP.value)
+        knee = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_KNEE.value)
+        ankle = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_ANKLE.value)
+        shoulder = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_SHOULDER.value)
+        
+        # Calculate angles
+        knee_angle = self.pose_detector.calculate_angle(hip, knee, ankle)
+        back_angle = self.pose_detector.calculate_angle(shoulder, hip, knee)
+        
+        feedback = []
+        score_components = []
+        
+        # Depth check
+        if knee_angle < self.thresholds['squat']['knee_angle_down']:
+            if self.stage != "down":
+                self.stage = "down"
+            score_components.append(100)
+        elif knee_angle < 120:
+            score_components.append(70)
+            feedback.append("Go deeper")
+        else:
+            if self.stage == "down":
+                self.stage = "up"
+                self.rep_count += 1
+            score_components.append(50)
+        
+        # Back straightness
+        if self.thresholds['squat']['back_angle_min'] < back_angle < self.thresholds['squat']['back_angle_max']:
+            score_components.append(100)
+        else:
+            score_components.append(50)
+            feedback.append("Keep back straight")
+        
+        # Knee alignment
+        knee_x = knee[0]
+        ankle_x = ankle[0]
+        if abs(knee_x - ankle_x) < 0.1:
+            score_components.append(100)
+        else:
+            score_components.append(60)
+            if knee_x > ankle_x:
+                feedback.append("Knees too forward")
+        
+        final_score = int(np.mean(score_components)) if score_components else 0
+        
+        return {
+            'feedback': feedback,
+            'score': final_score,
+            'angles': {'knee': knee_angle, 'back': back_angle},
+            'stage': self.stage,
+            'reps': self.rep_count
+        }
     
     def analyze_pushup(self, landmarks):
         """
         Analyze push-up form
         
+        Args:
+            landmarks: MediaPipe pose landmarks
+            
         Returns:
-            feedback: List of correction messages
-            score: Form accuracy score (0-100)
+            dict: {
+                'feedback': List of correction messages,
+                'score': Form accuracy score (0-100),
+                'angles': Dict of joint angles,
+                'stage': Current movement stage
+            }
         """
-        pass
+        if not landmarks:
+            return {'feedback': ['No pose detected'], 'score': 0, 'angles': {}, 'stage': None}
+        
+        # Get joint coordinates
+        shoulder = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_SHOULDER.value)
+        elbow = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_ELBOW.value)
+        wrist = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_WRIST.value)
+        hip = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_HIP.value)
+        knee = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_KNEE.value)
+        
+        # Calculate angles
+        elbow_angle = self.pose_detector.calculate_angle(shoulder, elbow, wrist)
+        body_angle = self.pose_detector.calculate_angle(shoulder, hip, knee)
+        
+        feedback = []
+        score_components = []
+        
+        # Depth check
+        if elbow_angle < self.thresholds['pushup']['elbow_angle_down']:
+            if self.stage != "down":
+                self.stage = "down"
+            score_components.append(100)
+        elif elbow_angle < 120:
+            score_components.append(70)
+            feedback.append("Go lower")
+        else:
+            if self.stage == "down":
+                self.stage = "up"
+                self.rep_count += 1
+            score_components.append(50)
+        
+        # Body alignment
+        if self.thresholds['pushup']['body_angle_min'] < body_angle < self.thresholds['pushup']['body_angle_max']:
+            score_components.append(100)
+        else:
+            score_components.append(50)
+            if body_angle < self.thresholds['pushup']['body_angle_min']:
+                feedback.append("Hips too low")
+            else:
+                feedback.append("Hips too high")
+        
+        final_score = int(np.mean(score_components)) if score_components else 0
+        
+        return {
+            'feedback': feedback,
+            'score': final_score,
+            'angles': {'elbow': elbow_angle, 'body': body_angle},
+            'stage': self.stage,
+            'reps': self.rep_count
+        }
     
     def analyze_plank(self, landmarks):
         """
         Analyze plank form
         
-        Returns:
-            feedback: List of correction messages
-            score: Form accuracy score (0-100)
-        """
-        pass
-    
-    def count_reps(self, exercise_type, current_state):
-        """
-        Count exercise repetitions based on movement patterns
-        
         Args:
-            exercise_type: Type of exercise
-            current_state: Current pose state
+            landmarks: MediaPipe pose landmarks
             
         Returns:
-            rep_count: Number of repetitions completed
+            dict: {
+                'feedback': List of correction messages,
+                'score': Form accuracy score (0-100),
+                'angles': Dict of joint angles
+            }
         """
-        pass
+        if not landmarks:
+            return {'feedback': ['No pose detected'], 'score': 0, 'angles': {}}
+        
+        # Get joint coordinates
+        shoulder = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_SHOULDER.value)
+        hip = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_HIP.value)
+        ankle = self.pose_detector.get_landmark_coords(landmarks, self.mp_pose.PoseLandmark.LEFT_ANKLE.value)
+        
+        # Calculate body alignment angle
+        body_angle = self.pose_detector.calculate_angle(shoulder, hip, ankle)
+        
+        feedback = []
+        score_components = []
+        
+        # Body straightness
+        if self.thresholds['plank']['body_angle_min'] < body_angle < self.thresholds['plank']['body_angle_max']:
+            score_components.append(100)
+        else:
+            score_components.append(50)
+            if body_angle < self.thresholds['plank']['body_angle_min']:
+                feedback.append("Hips too low")
+            else:
+                feedback.append("Hips too high")
+        
+        final_score = int(np.mean(score_components)) if score_components else 0
+        
+        return {
+            'feedback': feedback,
+            'score': final_score,
+            'angles': {'body': body_angle}
+        }
+    
+    def reset_reps(self):
+        """Reset rep counter and stage"""
+        self.rep_count = 0
+        self.stage = None
+    
+    def get_rep_count(self):
+        """Get current rep count"""
+        return self.rep_count

@@ -1,0 +1,322 @@
+{
+  "bodyweight_squats": {
+    "name": "Bodyweight Squats",
+    "difficulty": "beginner",
+    "muscle_group": ["legs", "glutes", "core"],
+    "equipment": "none",
+    "duration_per_rep": 3,
+    "calories_per_rep": 0.5,
+    "instructions": [
+      "Stand with feet shoulder-width apart",
+      "Keep chest up and core engaged",
+      "Lower down until thighs are parallel to ground",
+      "Push through heels to return to start"
+    ],
+    "sets": 3,
+    "reps": "12-15"
+  },
+  "pushups": {
+    "name": "Push-ups",
+    "difficulty": "intermediate",
+    "muscle_group": ["chest", "shoulders", "triceps", "core"],
+    "equipment": "none",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.3,
+    "instructions": [
+      "Start in plank position, hands shoulder-width apart",
+      "Keep body in straight line from head to heels",
+      "Lower chest to ground, elbows at 45 degrees",
+      "Push back up to start position"
+    ],
+    "sets": 3,
+    "reps": "10-15"
+  },
+  "plank": {
+    "name": "Plank Hold",
+    "difficulty": "beginner",
+    "muscle_group": ["core", "shoulders", "back"],
+    "equipment": "none",
+    "duration_per_rep": 30,
+    "calories_per_rep": 5,
+    "instructions": [
+      "Start in forearm plank position",
+      "Keep body straight, don't let hips sag",
+      "Hold position for specified time",
+      "Breathe steadily throughout"
+    ],
+    "sets": 3,
+    "reps": "30-60 seconds"
+  },
+  "lunges": {
+    "name": "Walking Lunges",
+    "difficulty": "intermediate",
+    "muscle_group": ["legs", "glutes", "core"],
+    "equipment": "none",
+    "duration_per_rep": 3,
+    "calories_per_rep": 0.4,
+    "instructions": [
+      "Step forward with one leg",
+      "Lower hips until both knees are at 90 degrees",
+      "Push through front heel to stand",
+      "Alternate legs"
+    ],
+    "sets": 3,
+    "reps": "10-12 per leg"
+  },
+  "burpees": {
+    "name": "Burpees",
+    "difficulty": "advanced",
+    "muscle_group": ["full_body", "cardio"],
+    "equipment": "none",
+    "duration_per_rep": 4,
+    "calories_per_rep": 1.5,
+    "instructions": [
+      "Start standing, then drop to squat position",
+      "Kick feet back to plank position",
+      "Do a push-up",
+      "Jump feet forward and explode up with a jump"
+    ],
+    "sets": 3,
+    "reps": "8-12"
+  },
+  "mountain_climbers": {
+    "name": "Mountain Climbers",
+    "difficulty": "intermediate",
+    "muscle_group": ["core", "shoulders", "cardio"],
+    "equipment": "none",
+    "duration_per_rep": 1,
+    "calories_per_rep": 0.2,
+    "instructions": [
+      "Start in plank position",
+      "Bring one knee toward chest",
+      "Quickly switch legs",
+      "Continue alternating at fast pace"
+    ],
+    "sets": 3,
+    "reps": "20-30 per leg"
+  },
+  "jumping_jacks": {
+    "name": "Jumping Jacks",
+    "difficulty": "beginner",
+    "muscle_group": ["full_body", "cardio"],
+    "equipment": "none",
+    "duration_per_rep": 1,
+    "calories_per_rep": 0.15,
+    "instructions": [
+      "Start standing with feet together",
+      "Jump feet out while raising arms overhead",
+      "Jump back to start position",
+      "Maintain steady rhythm"
+    ],
+    "sets": 3,
+    "reps": "20-30"
+  },
+  "dumbbell_curls": {
+    "name": "Dumbbell Bicep Curls",
+    "difficulty": "beginner",
+    "muscle_group": ["biceps"],
+    "equipment": "dumbbells",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.2,
+    "instructions": [
+      "Stand with dumbbells at sides, palms forward",
+      "Keep elbows stationary, curl weights up",
+      "Squeeze biceps at top",
+      "Lower with control"
+    ],
+    "sets": 3,
+    "reps": "10-12"
+  },
+  "dumbbell_shoulder_press": {
+    "name": "Dumbbell Shoulder Press",
+    "difficulty": "intermediate",
+    "muscle_group": ["shoulders", "triceps"],
+    "equipment": "dumbbells",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.3,
+    "instructions": [
+      "Stand or sit with dumbbells at shoulder height",
+      "Press weights overhead until arms are straight",
+      "Lower with control to shoulders",
+      "Keep core engaged"
+    ],
+    "sets": 3,
+    "reps": "8-12"
+  },
+  "dumbbell_rows": {
+    "name": "Dumbbell Bent Over Rows",
+    "difficulty": "intermediate",
+    "muscle_group": ["back", "biceps"],
+    "equipment": "dumbbells",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.35,
+    "instructions": [
+      "Bend at hips with slight knee bend",
+      "Let dumbbells hang at arms length",
+      "Pull weights to sides of torso",
+      "Squeeze shoulder blades together at top"
+    ],
+    "sets": 3,
+    "reps": "10-12"
+  },
+  "jump_rope": {
+    "name": "Jump Rope",
+    "difficulty": "intermediate",
+    "muscle_group": ["calves", "cardio"],
+    "equipment": "jump_rope",
+    "duration_per_rep": 1,
+    "calories_per_rep": 0.2,
+    "instructions": [
+      "Hold rope handles at sides",
+      "Swing rope overhead and jump as it passes under",
+      "Land softly on balls of feet",
+      "Maintain steady rhythm"
+    ],
+    "sets": 3,
+    "reps": "60-120 seconds"
+  },
+  "tricep_dips": {
+    "name": "Tricep Dips",
+    "difficulty": "intermediate",
+    "muscle_group": ["triceps", "shoulders"],
+    "equipment": "bench",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.25,
+    "instructions": [
+      "Sit on edge of bench, hands gripping edge",
+      "Slide forward so hips are off bench",
+      "Lower body by bending elbows to 90 degrees",
+      "Push back up to start"
+    ],
+    "sets": 3,
+    "reps": "10-15"
+  },
+  "high_knees": {
+    "name": "High Knees",
+    "difficulty": "beginner",
+    "muscle_group": ["legs", "cardio"],
+    "equipment": "none",
+    "duration_per_rep": 1,
+    "calories_per_rep": 0.18,
+    "instructions": [
+      "Run in place lifting knees high",
+      "Bring knees up to hip level",
+      "Pump arms vigorously",
+      "Maintain fast pace"
+    ],
+    "sets": 3,
+    "reps": "30-60 seconds"
+  },
+  "side_plank": {
+    "name": "Side Plank",
+    "difficulty": "intermediate",
+    "muscle_group": ["core", "obliques"],
+    "equipment": "none",
+    "duration_per_rep": 20,
+    "calories_per_rep": 3,
+    "instructions": [
+      "Lie on side, prop up on forearm",
+      "Stack feet and lift hips off ground",
+      "Keep body in straight line",
+      "Hold position, then switch sides"
+    ],
+    "sets": 3,
+    "reps": "20-45 seconds per side"
+  },
+  "russian_twists": {
+    "name": "Russian Twists",
+    "difficulty": "intermediate",
+    "muscle_group": ["core", "obliques"],
+    "equipment": "none",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.2,
+    "instructions": [
+      "Sit with knees bent, feet off ground",
+      "Lean back slightly, keep back straight",
+      "Rotate torso side to side",
+      "Touch ground on each side"
+    ],
+    "sets": 3,
+    "reps": "20-30 total"
+  },
+  "wall_pushups": {
+    "name": "Wall Push-ups",
+    "difficulty": "beginner",
+    "muscle_group": ["chest", "shoulders", "triceps"],
+    "equipment": "none",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.15,
+    "instructions": [
+      "Stand arm's length from wall",
+      "Place hands on wall at shoulder height",
+      "Bend elbows to lean toward wall",
+      "Push back to start position"
+    ],
+    "sets": 3,
+    "reps": "15-20"
+  },
+  "chair_squats": {
+    "name": "Chair Squats",
+    "difficulty": "beginner",
+    "muscle_group": ["legs", "glutes"],
+    "equipment": "chair",
+    "duration_per_rep": 3,
+    "calories_per_rep": 0.3,
+    "instructions": [
+      "Stand in front of chair",
+      "Lower down until touching chair",
+      "Stand back up without using hands",
+      "Keep weight in heels"
+    ],
+    "sets": 3,
+    "reps": "12-15"
+  },
+  "step_ups": {
+    "name": "Step-Ups",
+    "difficulty": "intermediate",
+    "muscle_group": ["legs", "glutes", "cardio"],
+    "equipment": "bench",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.4,
+    "instructions": [
+      "Place one foot on bench or step",
+      "Push through heel to step up",
+      "Bring other leg to bench",
+      "Step back down and alternate"
+    ],
+    "sets": 3,
+    "reps": "10-12 per leg"
+  },
+  "leg_raises": {
+    "name": "Leg Raises",
+    "difficulty": "intermediate",
+    "muscle_group": ["core", "hip_flexors"],
+    "equipment": "none",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.15,
+    "instructions": [
+      "Lie on back, hands under hips",
+      "Lift legs straight up to 90 degrees",
+      "Lower slowly without touching ground",
+      "Keep lower back pressed to floor"
+    ],
+    "sets": 3,
+    "reps": "10-15"
+  },
+  "bicycle_crunches": {
+    "name": "Bicycle Crunches",
+    "difficulty": "intermediate",
+    "muscle_group": ["core", "obliques"],
+    "equipment": "none",
+    "duration_per_rep": 2,
+    "calories_per_rep": 0.18,
+    "instructions": [
+      "Lie on back, hands behind head",
+      "Bring opposite elbow to opposite knee",
+      "Extend other leg straight",
+      "Alternate sides in cycling motion"
+    ],
+    "sets": 3,
+    "reps": "20-30 total"
+  }
+}
