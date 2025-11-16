@@ -26,6 +26,55 @@ class MealPlanRequest(BaseModel):
     exclude: Optional[str] = None  # Comma-separated list of ingredients to exclude
 
 
+@router.get("/meal-plan")
+async def get_sample_meal_plan(diet_type: str = "balanced"):
+    """
+    Get a sample meal plan
+    """
+    plans = {
+        "balanced": {
+            "name": "Balanced Meal Plan",
+            "daily_calories": 2000,
+            "meals": [
+                {"meal": "Breakfast", "name": "Oatmeal with berries", "calories": 350},
+                {"meal": "Lunch", "name": "Grilled chicken salad", "calories": 500},
+                {"meal": "Dinner", "name": "Salmon with vegetables", "calories": 600},
+                {"meal": "Snacks", "name": "Greek yogurt & nuts", "calories": 300}
+            ],
+            "macros": {"protein": "25%", "carbs": "45%", "fats": "30%"}
+        },
+        "keto": {
+            "name": "Keto Meal Plan",
+            "daily_calories": 1800,
+            "meals": [
+                {"meal": "Breakfast", "name": "Eggs with avocado", "calories": 400},
+                {"meal": "Lunch", "name": "Caesar salad with chicken", "calories": 500},
+                {"meal": "Dinner", "name": "Steak with broccoli", "calories": 700},
+                {"meal": "Snacks", "name": "Cheese and almonds", "calories": 200}
+            ],
+            "macros": {"protein": "25%", "carbs": "5%", "fats": "70%"}
+        },
+        "vegetarian": {
+            "name": "Vegetarian Meal Plan",
+            "daily_calories": 1900,
+            "meals": [
+                {"meal": "Breakfast", "name": "Smoothie bowl", "calories": 350},
+                {"meal": "Lunch", "name": "Quinoa Buddha bowl", "calories": 500},
+                {"meal": "Dinner", "name": "Lentil curry with rice", "calories": 550},
+                {"meal": "Snacks", "name": "Hummus with veggies", "calories": 250}
+            ],
+            "macros": {"protein": "20%", "carbs": "50%", "fats": "30%"}
+        }
+    }
+    
+    plan = plans.get(diet_type.lower(), plans["balanced"])
+    return {
+        "status": "success",
+        "diet_type": diet_type,
+        "plan": plan
+    }
+
+
 @router.post("/meal-plan/generate")
 async def generate_meal_plan(request: MealPlanRequest):
     """

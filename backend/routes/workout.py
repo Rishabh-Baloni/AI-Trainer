@@ -309,6 +309,57 @@ class WorkoutRequest(BaseModel):
     difficulty: str = "intermediate"
 
 
+@router.get("/recommend")
+async def recommend_workout(fitness_level: str = "intermediate"):
+    """
+    Get recommended workout plan based on fitness level
+    """
+    plans = {
+        "beginner": {
+            "plan_name": "Beginner Full Body",
+            "duration_weeks": 4,
+            "days_per_week": 3,
+            "exercises": [
+                {"name": "Squats", "sets": 3, "reps": 10},
+                {"name": "Push-ups", "sets": 3, "reps": 8},
+                {"name": "Plank", "sets": 3, "duration": "30 seconds"}
+            ],
+            "estimated_calories": 250
+        },
+        "intermediate": {
+            "plan_name": "Intermediate Strength",
+            "duration_weeks": 6,
+            "days_per_week": 4,
+            "exercises": [
+                {"name": "Squats", "sets": 4, "reps": 12},
+                {"name": "Push-ups", "sets": 4, "reps": 15},
+                {"name": "Lunges", "sets": 3, "reps": 10},
+                {"name": "Plank", "sets": 3, "duration": "60 seconds"}
+            ],
+            "estimated_calories": 400
+        },
+        "advanced": {
+            "plan_name": "Advanced HIIT",
+            "duration_weeks": 8,
+            "days_per_week": 5,
+            "exercises": [
+                {"name": "Jump Squats", "sets": 4, "reps": 15},
+                {"name": "Burpees", "sets": 4, "reps": 12},
+                {"name": "Mountain Climbers", "sets": 4, "duration": "45 seconds"},
+                {"name": "Plank", "sets": 4, "duration": "90 seconds"}
+            ],
+            "estimated_calories": 600
+        }
+    }
+    
+    plan = plans.get(fitness_level.lower(), plans["intermediate"])
+    return {
+        "status": "success",
+        "fitness_level": fitness_level,
+        "plan": plan
+    }
+
+
 @router.post("/generate")
 async def generate_workout_plan(request: WorkoutRequest):
     """

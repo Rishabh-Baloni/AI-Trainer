@@ -36,6 +36,7 @@ export default function Home() {
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-700 hover:text-indigo-600 transition">Features</a>
               <a href="#how-it-works" className="text-gray-700 hover:text-indigo-600 transition">How It Works</a>
+              <Link href="/analytics" className="text-gray-700 hover:text-indigo-600 transition">Analytics</Link>
               <a href="#pricing" className="text-gray-700 hover:text-indigo-600 transition">Pricing</a>
               <Link href="/dashboard" className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition">
                 Get Started
@@ -69,12 +70,12 @@ export default function Home() {
               </div>
               
               <h1 className="text-6xl md:text-7xl font-black mb-6 leading-tight">
-                Transform Your
-                <span className="block text-yellow-300">Fitness Journey</span>
+                AI-Powered
+                <span className="block text-yellow-300">Fitness Trainer</span>
               </h1>
               
               <p className="text-xl text-indigo-100 mb-8 leading-relaxed">
-                Experience the future of fitness with AI-powered pose detection, personalized workouts, and smart nutrition planning—all in one platform.
+                Real-time pose detection with MediaPipe, automatic rep counting, and smart workout analytics—powered by machine learning.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -95,19 +96,19 @@ export default function Home() {
                   <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-indigo-100">Free Forever</span>
+                  <span className="text-indigo-100">Free & Open Source</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-indigo-100">No Ads</span>
+                  <span className="text-indigo-100">Browser-Based</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-indigo-100">Privacy First</span>
+                  <span className="text-indigo-100">No Installation</span>
                 </div>
               </div>
             </div>
@@ -217,11 +218,11 @@ export default function Home() {
               <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-4 border border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">🔥</span>
+                    <span className="text-2xl">🤖</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">10K+</div>
-                    <div className="text-xs text-gray-600">Active Users</div>
+                    <div className="text-2xl font-bold text-gray-900">3 AI Models</div>
+                    <div className="text-xs text-gray-600">ML Powered</div>
                   </div>
                 </div>
               </div>
@@ -229,11 +230,11 @@ export default function Home() {
               <div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-xl p-4 border border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">⭐</span>
+                    <span className="text-2xl">🎯</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">4.9</div>
-                    <div className="text-xs text-gray-600">Rating</div>
+                    <div className="text-2xl font-bold text-gray-900">Real-Time</div>
+                    <div className="text-xs text-gray-600">Pose Detection</div>
                   </div>
                 </div>
               </div>
@@ -246,39 +247,39 @@ export default function Home() {
       <section id="features" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-            <p className="text-xl text-gray-600">Everything you need to achieve your fitness goals</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">AI-Powered Features</h2>
+            <p className="text-xl text-gray-600">Machine Learning technology for your fitness journey</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 icon: '📹',
-                title: 'Real-Time Pose Detection',
-                description: 'AI-powered camera analysis corrects your form instantly, preventing injuries and maximizing results.',
+                title: 'MediaPipe Pose Detection',
+                description: 'Real-time pose tracking using Google\'s MediaPipe. Tracks 33 body landmarks with instant form feedback.',
                 color: 'from-blue-500 to-cyan-500'
               },
               {
-                icon: '💪',
-                title: 'Personalized Workouts',
-                description: 'Adaptive AI creates custom routines based on your fitness level, goals, and available equipment.',
+                icon: '🔢',
+                title: 'Automatic Rep Counting',
+                description: 'AI analyzes your movement and counts reps automatically for squats, pushups, and planks.',
                 color: 'from-purple-500 to-pink-500'
               },
               {
-                icon: '🍎',
-                title: 'Smart Nutrition Plans',
-                description: 'Get AI-generated meal plans tailored to your dietary needs, preferences, and fitness objectives.',
+                icon: '📊',
+                title: 'Smart Analytics Engine',
+                description: 'Track workout history, calories burned, and get personalized insights with linear regression predictions.',
                 color: 'from-orange-500 to-red-500'
               },
               {
-                icon: '📊',
-                title: 'Progress Analytics',
-                description: 'Track your improvements with detailed insights, predictions, and achievement milestones.',
+                icon: '⚡',
+                title: 'WebSocket Real-Time',
+                description: 'Live video processing at 30 FPS with smooth performance and instant feedback on your form.',
                 color: 'from-green-500 to-teal-500'
               },
               {
-                icon: '🎯',
-                title: 'Goal Setting & Tracking',
-                description: 'Set realistic goals and let AI guide you with actionable steps and motivation.',
+                icon: '💯',
+                title: 'Form Score Calculation',
+                description: 'Get a 0-100% form score based on body angles, alignment, and proper exercise technique.',
                 color: 'from-indigo-500 to-blue-500'
               },
               {
@@ -335,10 +336,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
-              { number: '10K+', label: 'Active Users' },
-              { number: '500+', label: 'Exercise Database' },
-              { number: '95%', label: 'Satisfaction Rate' },
-              { number: '1M+', label: 'Workouts Completed' }
+              { number: '33+', label: 'Body Landmarks' },
+              { number: '3', label: 'Exercise Types' },
+              { number: 'Real-Time', label: 'Form Analysis' },
+              { number: 'Auto', label: 'Rep Counting' }
             ].map((stat, index) => (
               <div key={index}>
                 <div className="text-5xl font-bold mb-2">{stat.number}</div>
@@ -353,15 +354,15 @@ export default function Home() {
       <section className="py-20 px-4 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Ready to Transform Your Fitness Journey?
+            Ready to Start Your AI-Powered Fitness Journey?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of users who are already achieving their fitness goals with AI-powered guidance.
+            Experience the future of fitness training with real-time AI pose detection and personalized analytics.
           </p>
           <Link href="/dashboard" className="inline-block bg-indigo-600 text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-indigo-700 transition transform hover:scale-105">
-            Start Your Free Trial Today
+            Try Pose Detection Now
           </Link>
-          <p className="text-sm text-gray-500 mt-4">No credit card required • Cancel anytime</p>
+          <p className="text-sm text-gray-500 mt-4">Free to use • No signup required</p>
         </div>
       </section>
 

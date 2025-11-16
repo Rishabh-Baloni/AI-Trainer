@@ -1,12 +1,8 @@
 """
-FastAPI Backend for AI Fitness Trainer
-Main application entry point
+WebSocket endpoint for real-time pose detection
 """
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import uvicorn
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import cv2
 import numpy as np
 import json
@@ -14,58 +10,26 @@ import base64
 import sys
 import os
 
-# Import routers
-from routes.workout import router as workout_router
-from routes.diet import router as diet_router
-from routes.auth import router as auth_router
-from routes.pose import router as pose_router
-from routes.analytics import router as analytics_router
-
-# Add ml_models to path for pose detection
-ml_models_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ml_models', 'pose_detection'))
-sys.path.insert(0, ml_models_path)
+# Add ml_models to path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'ml_models', 'pose_detection'))
 
 try:
     from pose_detector import PoseDetector
     from exercise_analyzer import ExerciseAnalyzer
     MEDIAPIPE_AVAILABLE = True
-    print(f"MediaPipe modules loaded from: {ml_models_path}")
-except ImportError as e:
+except ImportError:
     MEDIAPIPE_AVAILABLE = False
-    print(f"WARNING: MediaPipe not available: {e}")
 
-app = FastAPI(
-    title="AI Fitness Trainer API",
-    description="Backend API for AI-powered virtual fitness trainer",
-    version="1.0.0"
-)
-
-# CORS middleware for frontend connection
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Update with frontend URL in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Include routers
-app.include_router(workout_router)
-app.include_router(diet_router)
-app.include_router(auth_router)
-app.include_router(pose_router)
-app.include_router(analytics_router)
+router = APIRouter()
 
 
-@app.websocket("/ws/pose")
+@router.websocket("/ws/pose")
 async def websocket_pose_detection(websocket: WebSocket):
     """
     WebSocket endpoint for real-time pose detection
     Receives video frames, processes with MediaPipe, returns analysis
     """
-    print("WebSocket connection attempt...")
     await websocket.accept()
-    print("WebSocket connected!")
     
     if not MEDIAPIPE_AVAILABLE:
         await websocket.send_json({
@@ -147,35 +111,3 @@ async def websocket_pose_detection(websocket: WebSocket):
         await websocket.send_json({
             "error": str(e)
         })
-
-
-@app.get("/")
-async def root():
-    """
-    Health check endpoint
-    """
-    return {
-        "message": "AI Fitness Trainer API is running",
-        "version": "1.0.0",
-        "status": "healthy",
-        "endpoints": {
-            "workout": "/api/workout",
-            "diet": "/api/diet",
-            "auth": "/api/auth",
-            "pose": "/api/pose",
-            "analytics": "/api/analytics",
-            "docs": "/docs"
-        }
-    }
-
-
-@app.get("/api/health")
-async def health_check():
-    """
-    API health check
-    """
-    return {"status": "ok"}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)

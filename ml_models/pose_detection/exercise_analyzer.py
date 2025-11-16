@@ -5,7 +5,10 @@ Analyzes specific exercises and provides real-time feedback
 
 import numpy as np
 import mediapipe as mp
-from .pose_detector import PoseDetector
+try:
+    from pose_detector import PoseDetector
+except ImportError:
+    from .pose_detector import PoseDetector
 
 
 class ExerciseAnalyzer:

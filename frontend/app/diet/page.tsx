@@ -17,7 +17,7 @@ export default function DietPage() {
     setError('')
     
     try {
-      const response = await fetch('http://localhost:8000/api/diet/meal-plan/generate', {
+      const response = await fetch('http://localhost:8001/api/diet/meal-plan/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -35,7 +35,7 @@ export default function DietPage() {
         setError('Failed to generate meal plan')
       }
     } catch (err) {
-      setError('Error connecting to server. Make sure backend is running on port 8000.')
+      setError('Error connecting to server. Make sure backend is running on port 8001.')
     } finally {
       setLoading(false)
     }
